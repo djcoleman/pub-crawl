@@ -1,7 +1,7 @@
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { Photo, Place } from "../model/Place";
 import { Card } from "react-native-paper";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { googlePlacesApi } from "../services/GooglePlacesAPI";
 
 type RatingProps = {
@@ -61,21 +61,36 @@ const PlaceListItem = ({ place, index, selected, onPress }: PlaceListItemProps) 
 
 export type PlaceListParams = {
     places: Place[];
+    selectedPlace: Place | null;
+    onSelected: (place: Place) => void;
 }
-export const PlaceList = ({places} : PlaceListParams) => {
-    const [selectedItem, setSelectedItem] = useState(-1)
+export const PlaceList = ({places, selectedPlace, onSelected } : PlaceListParams) => {
+    const listRef = useRef<FlatList | null>(null);
+
+    useEffect(() => {
+        if (listRef.current && selectedPlace) {
+            listRef.current.scrollToIndex({ animated: true, index: places.findIndex(item => item.id === selectedPlace.id)})
+        }
+    }, [selectedPlace]);
 
     const placeElements = places.map((place, index) => {
         <Text key={index}>{place.displayName.text}</Text>
     });
 
+    const renderItem = (item: Place, index: number) => (
+        <PlaceListItem place={item} index={index} selected={selectedPlace && selectedPlace.id === item.id} onPress={() => {
+            onSelected(item);
+        }}/>
+    );
+    
     return (
         <View style={styles.container}>
             <FlatList 
                 contentContainerStyle={{gap: 8}}
                 data={places}
-                renderItem={({item, index}) => <PlaceListItem place={item} index={index} selected={selectedItem === index} onPress={() => setSelectedItem(index)}/>}
-                keyExtractor={place => place.displayName.text}
+                renderItem={({item, index}) => renderItem(item, index)}
+                keyExtractor={place => place.id}
+                ref={listRef}
             />
         </View>
     )

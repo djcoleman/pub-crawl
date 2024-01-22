@@ -39,6 +39,7 @@ export type Photo = {
 }
 
 export type Place = {
+    id: string;
     formattedAddress: string;
     location: Point;
     rating: number;

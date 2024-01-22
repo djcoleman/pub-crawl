@@ -49,7 +49,7 @@ export class GooglePlacesAPI implements PlacesAPI {
             headers: {
                 'Content-Type': 'application/json',
                 'X-Goog-Api-Key': this.key,
-                'X-Goog-FieldMask': "places.displayName,places.formattedAddress,places.currentOpeningHours,places.rating,places.location,places.editorialSummary,places.photos"
+                'X-Goog-FieldMask': "places.id,places.displayName,places.formattedAddress,places.currentOpeningHours,places.rating,places.location,places.editorialSummary,places.photos"
             }
         });
 

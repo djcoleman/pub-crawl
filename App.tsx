@@ -2,14 +2,15 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import MapView from 'react-native-maps';
 import { Appbar, PaperProvider } from 'react-native-paper';
-import { Map } from './components/Map';
-import { useEffect, useState } from 'react';
+import { CustomMap } from './components/Map';
+import { useEffect, useRef, useState } from 'react';
 import { Place, Point } from './model/Place';
 import { PlaceList } from './components/PlaceList';
 import { googlePlacesApi } from './services/GooglePlacesAPI';
 
 export default function App() {
   const [places, setPlaces] = useState<Array<Place>>([]);
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const location : Point = { latitude: 54.97404, longitude: -1.59210 };
 
   useEffect(() => {
@@ -26,9 +27,9 @@ export default function App() {
         </Appbar.Header>
         <View style={styles.container}>
           <View style={styles.map}>
-            <Map location={location} places={places}/>
+            <CustomMap location={location} places={places} selectedPlace={selectedPlace} onPlaceSelect={(place) => setSelectedPlace(place)} />
           </View>
-          <PlaceList places={places} />
+          <PlaceList places={places} selectedPlace={selectedPlace} onSelected={(place) => setSelectedPlace(place)} />
         </View>
         <StatusBar style="auto" />
     </PaperProvider>
