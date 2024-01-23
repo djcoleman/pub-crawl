@@ -12,6 +12,12 @@ type GetMediaResponse = {
     photoUri:  string;
 }
 
+export type NetworkError = {
+    message: string;
+    status?: number;
+    isTransient: boolean;
+}
+
 export class GooglePlacesAPI implements PlacesAPI {
     private client: AxiosInstance;
     private key: string;
@@ -40,7 +46,6 @@ export class GooglePlacesAPI implements PlacesAPI {
             console.error("Error finding places - location isn't set.");
             return [];
         }
-        console.log("Fetching places for location " + JSON.stringify(location));
         const response = await this.client.post<SearchNearbyResponse>('/v1/places:searchNearby', {
             includedTypes: [ "bar" ],
             maxResultCount: maxResults,
@@ -59,6 +64,13 @@ export class GooglePlacesAPI implements PlacesAPI {
                 'X-Goog-Api-Key': this.key,
                 'X-Goog-FieldMask': "places.id,places.displayName,places.formattedAddress,places.currentOpeningHours,places.rating,places.location,places.editorialSummary,places.photos"
             }
+        }).catch((error) => {
+            const networkError : NetworkError = { 
+                message: "Error retrieving nearby pubs", 
+                status: error.response?.status || undefined, 
+                isTransient: error.response?.status >= 500 
+            };
+            throw networkError;
         });
 
         return response.data.places;
