@@ -1,46 +1,24 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import MapView from 'react-native-maps';
-import { Appbar, PaperProvider } from 'react-native-paper';
-import { CustomMap } from './components/Map';
-import { useEffect, useRef, useState } from 'react';
-import { Place, Point } from './model/Place';
-import { PlaceList } from './components/PlaceList';
-import { googlePlacesApi } from './services/GooglePlacesAPI';
+import { PaperProvider } from 'react-native-paper';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { MapScreen } from './src/screens/MapScreen';
+import { DetailsScreen } from './src/screens/DetailsScreen';
+import { RootStackParamList } from './src/screens/types';
+import { AppHeader } from './src/components/AppHeader';
+
+const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  const [places, setPlaces] = useState<Array<Place>>([]);
-  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
-  const location : Point = { latitude: 54.97404, longitude: -1.59210 };
-
-  useEffect(() => {
-    async function fetchPlaces() {
-      setPlaces(await googlePlacesApi.findPlacesNear(location, 500.0, 10));
-    }
-    fetchPlaces();
-  }, []);
-  
   return (
     <PaperProvider>
-        <Appbar.Header>
-          <Appbar.Content title={process.env.EXPO_PUBLIC_APP_TITLE} />
-        </Appbar.Header>
-        <View style={styles.container}>
-          <View style={styles.map}>
-            <CustomMap location={location} places={places} selectedPlace={selectedPlace} onPlaceSelect={(place) => setSelectedPlace(place)} />
-          </View>
-          <PlaceList places={places} selectedPlace={selectedPlace} onSelected={(place) => setSelectedPlace(place)} />
-        </View>
-        <StatusBar style="auto" />
+        <NavigationContainer>
+          <RootStack.Navigator initialRouteName='Home' screenOptions={{ header: (props) => <AppHeader {...props} /> }}>
+            <RootStack.Screen name='Home' component={MapScreen} options={{ title: "Pub Crawl" }} />
+            <RootStack.Screen name='Details' component={DetailsScreen} />
+          </RootStack.Navigator>
+        </NavigationContainer>
+      <StatusBar style="auto" />
     </PaperProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  map: {
-    height: '40%'
-  }
-});

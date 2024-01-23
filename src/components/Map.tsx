@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react"
-import * as Location from 'expo-location'
 import MapView, { Marker, Region } from "react-native-maps";
 import { StyleSheet } from "react-native";
 import { Place, Point } from "../model/Place";
@@ -9,32 +8,17 @@ export type MapProps = {
     places: Place[];
     selectedPlace: Place | null;
     onPlaceSelect: (place: Place) => void;
+    onLocationChange: (point: Point) => void;
 }
 
-export const CustomMap = ({location, places, selectedPlace, onPlaceSelect} : MapProps) => {
+export const CustomMap = ({location, places, selectedPlace, onPlaceSelect, onLocationChange} : MapProps) => {
     const mapRef = useRef<MapView | null>(null);
     const markerRefs = useRef({});
     const [initialRegion, setInitialRegion] = useState<Region| null>(null);
     const [currentRegion, setCurrentRegion] = useState<Region | null>(null);
-    const [currentLocation, setCurrentLocation] = useState<Point | null>(location);
-
-    const resolveLocation = async () : Promise<Point | null> => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            console.error("Permission to access location was denied");
-            return Promise.reject();
-        }
-
-        const gpsLocation = await Location.getCurrentPositionAsync({});
-        return gpsLocation.coords;
-    } 
 
     useEffect(() => {
         const setLocation = async () => {
-            if (!location) {
-                location = await resolveLocation();
-                setCurrentLocation(location);
-            }
 
             const region = {
                 latitude: location.latitude,
@@ -44,11 +28,12 @@ export const CustomMap = ({location, places, selectedPlace, onPlaceSelect} : Map
             }
             setInitialRegion(region);
             setCurrentRegion(region);
+            mapRef.current.animateToRegion(region);
         }
 
         setLocation();
 
-    }, []);
+    }, [location]);
 
     useEffect(() => {
         if (selectedPlace !== null && markerRefs.current[selectedPlace.id]) {
@@ -85,8 +70,8 @@ export const CustomMap = ({location, places, selectedPlace, onPlaceSelect} : Map
     );
 
     return (
-        <MapView style={styles.map} initialRegion={initialRegion} ref={mapRef} onRegionChangeComplete={handleRegionChangeComplete}>
-            <Marker key="currentLocation" coordinate={currentLocation} pinColor="gold" title="You are here" />
+        <MapView style={styles.map} initialRegion={initialRegion} ref={mapRef} onRegionChangeComplete={handleRegionChangeComplete} onLongPress={(event) => onLocationChange(event.nativeEvent.coordinate)}>
+            <Marker key="currentLocation" coordinate={location} pinColor="gold" title="You are here" />
             {placeMarkers}
         </MapView>
     )

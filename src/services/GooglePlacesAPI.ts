@@ -36,12 +36,20 @@ export class GooglePlacesAPI implements PlacesAPI {
     }
 
     async findPlacesNear(location: Point, radius: number, maxResults: number): Promise<Place[]> {
+        if (location == null) {
+            console.error("Error finding places - location isn't set.");
+            return [];
+        }
+        console.log("Fetching places for location " + JSON.stringify(location));
         const response = await this.client.post<SearchNearbyResponse>('/v1/places:searchNearby', {
             includedTypes: [ "bar" ],
             maxResultCount: maxResults,
             locationRestriction: {
                 circle: {
-                    center: location,
+                    center: {
+                        latitude: location.latitude,
+                        longitude: location.longitude
+                    },
                     radius: radius
                 }
             }
