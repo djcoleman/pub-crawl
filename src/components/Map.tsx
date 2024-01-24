@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import MapView, { Marker, Region } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import { StyleSheet } from "react-native";
 import { Place, Point } from "../model/Place";
 
@@ -70,7 +70,14 @@ export const CustomMap = ({location, places, selectedPlace, onPlaceSelect, onLoc
     );
 
     return (
-        <MapView style={styles.map} initialRegion={initialRegion} ref={mapRef} onRegionChangeComplete={handleRegionChangeComplete} onLongPress={(event) => onLocationChange(event.nativeEvent.coordinate)}>
+        <MapView
+            style={styles.map}
+            initialRegion={initialRegion}
+            ref={mapRef}
+            onRegionChangeComplete={handleRegionChangeComplete}
+            onLongPress={(event) => onLocationChange(event.nativeEvent.coordinate)}
+            provider={ PROVIDER_GOOGLE }
+        >
             <Marker key="currentLocation" coordinate={location} pinColor="gold" title="You are here" />
             {placeMarkers}
         </MapView>
