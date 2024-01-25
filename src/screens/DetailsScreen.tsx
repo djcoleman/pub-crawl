@@ -35,7 +35,10 @@ export const DetailsScreen = ({route, navigation}: DetailsScreenProps) => {
                 <Rating style={style.rating} rating={place.rating} showNumber={true} />
                 {place.editorialSummary && (<Text style={style.description}>{place.editorialSummary.text}</Text>)}
                 <Text style={style.subHeading}>Opening Hours</Text>
-                <OpeningHours descriptions={place.currentOpeningHours.weekdayDescriptions} />
+                {place.currentOpeningHours ? 
+                    <OpeningHours descriptions={place.currentOpeningHours.weekdayDescriptions} /> :
+                    <Text>No opening hours available.</Text>
+                }
             </View>
         </View>
     );
