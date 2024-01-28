@@ -73,7 +73,7 @@ export class GooglePlacesAPI implements PlacesAPI {
             throw networkError;
         });
 
-        return response.data.places;
+        return response.data.places || [];
     }
 }
 
