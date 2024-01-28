@@ -10,10 +10,11 @@ type OpeningHoursProps = {
 const OpeningHours = ({descriptions}: OpeningHoursProps) => {
     const now = new Date();
     const dayOfWeek = now.getDay();
+    const dayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
     return (
         <View>
-            {descriptions.map((hours, index) => <Text key={index} style={index === (dayOfWeek - 1 % 6) ? {fontWeight: 'bold'} : {}}>{hours}</Text>)}
+            {descriptions.map((hours, index) => <Text key={index} style={index === dayIndex ? {fontWeight: 'bold'} : {}}>{hours}</Text>)}
         </View>
     );
 }

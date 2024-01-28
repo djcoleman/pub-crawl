@@ -13,7 +13,7 @@ export const AppHeader = ({navigation, route, options, back, actions}: AppHeader
         <Appbar.Header>
             {back &&<Appbar.BackAction onPress={navigation.goBack} />}
             <Appbar.Content title={title} />
-            {actions && actions.map((options, index) => <Appbar.Action key={index} {...options} />)}
+            {actions && actions.map((props, index) => <Appbar.Action key={index} {...props} />)}
         </Appbar.Header>
     )
 }

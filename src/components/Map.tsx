@@ -15,7 +15,6 @@ export const CustomMap = ({location, places, selectedPlace, onPlaceSelect, onLoc
     const mapRef = useRef<MapView | null>(null);
     const markerRefs = useRef({});
     const [initialRegion, setInitialRegion] = useState<Region| null>(null);
-    const [currentRegion, setCurrentRegion] = useState<Region | null>(null);
 
     useEffect(() => {
         const setLocation = async () => {
@@ -27,7 +26,6 @@ export const CustomMap = ({location, places, selectedPlace, onPlaceSelect, onLoc
                 longitudeDelta: 0.005
             }
             setInitialRegion(region);
-            setCurrentRegion(region);
             mapRef.current.animateToRegion(region);
         }
 
@@ -51,12 +49,8 @@ export const CustomMap = ({location, places, selectedPlace, onPlaceSelect, onLoc
         }
     }, [selectedPlace])
 
-    const handleRegionChangeComplete = (region : Region) => {
-        setCurrentRegion(region);
-    }
-
-    const placeMarkers = places.map((place, index) => (
-        <Marker key={index} 
+    const placeMarkers = places.map((place) => (
+        <Marker key={place.id} 
             coordinate={place.location} 
             title={place.displayName.text} 
             identifier={place.id} 
@@ -74,7 +68,6 @@ export const CustomMap = ({location, places, selectedPlace, onPlaceSelect, onLoc
             style={styles.map}
             initialRegion={initialRegion}
             ref={mapRef}
-            onRegionChangeComplete={handleRegionChangeComplete}
             onLongPress={(event) => onLocationChange(event.nativeEvent.coordinate)}
             provider={ PROVIDER_GOOGLE }
         >

@@ -10,16 +10,14 @@ import { TapGestureHandler, State, Gesture, GestureDetector, GestureHandlerRootV
 
 type PlaceListItemProps = {
     place: Place;
-    index: number;
     selected: boolean;
     onPress: () => void;
-    onLongPress: () => void;
+    onDoublePress: () => void;
 }
-const PlaceListItem = ({ place, index, selected, onPress, onLongPress }: PlaceListItemProps) => {
-    const doubleTapRef = useRef(null);
+const PlaceListItem = ({ place, selected, onPress, onDoublePress }: PlaceListItemProps) => {
 
     const singleTap = Gesture.Tap().maxDuration(250).onStart(onPress);
-    const doubleTap = Gesture.Tap().maxDuration(250).numberOfTaps(2).onStart(onLongPress);
+    const doubleTap = Gesture.Tap().maxDuration(250).numberOfTaps(2).onStart(onDoublePress);
 
     return (
         <GestureDetector gesture={Gesture.Exclusive(doubleTap, singleTap)}>
@@ -54,29 +52,24 @@ export const PlaceList = ({places, selectedPlace, onSelected } : PlaceListParams
         }
     }, [selectedPlace]);
 
-    const placeElements = places.map((place, index) => {
-        <Text key={index}>{place.displayName.text}</Text>
-    });
-
-    const renderItem = (item: Place, index: number) => (
+    const renderItem = (item: Place) => (
         <PlaceListItem 
             place={item} 
-            index={index} 
             selected={selectedPlace && selectedPlace.id === item.id} 
             onPress={() => onSelected(item)}
-            onLongPress={() => navigation.navigate('Details', { place: item })}/>
+            onDoublePress={() => navigation.navigate('Details', { place: item })}/>
 
     );
     
     return (
-            <GestureHandlerRootView style={styles.container}>
-                <FlatList
-                    contentContainerStyle={{ gap: 8 }}
-                    data={places}
-                    renderItem={({ item, index }) => renderItem(item, index)}
-                    keyExtractor={place => place.id}
-                    ref={listRef}
-                />
+        <GestureHandlerRootView style={styles.container}>
+            <FlatList
+                contentContainerStyle={{ gap: 8 }}
+                data={places}
+                renderItem={({ item }) => renderItem(item)}
+                keyExtractor={place => place.id}
+                ref={listRef}
+            />
         </GestureHandlerRootView>
     )
 }
