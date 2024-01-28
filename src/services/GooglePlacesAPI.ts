@@ -47,8 +47,9 @@ export class GooglePlacesAPI implements PlacesAPI {
             return [];
         }
         const response = await this.client.post<SearchNearbyResponse>('/v1/places:searchNearby', {
-            includedTypes: [ "bar" ],
+            includedPrimaryTypes: [ "bar" ],
             maxResultCount: maxResults,
+            rankPreference: "DISTANCE",
             locationRestriction: {
                 circle: {
                     center: {
@@ -72,8 +73,8 @@ export class GooglePlacesAPI implements PlacesAPI {
             };
             throw networkError;
         });
-
-        return response.data.places || [];
+        const places = response.data.places || [];
+        return places.filter((obj, index, self) => index === self.findIndex((place) => place.id === obj.id));
     }
 }
 

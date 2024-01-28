@@ -30,7 +30,7 @@ export const DetailsScreen = ({route, navigation}: DetailsScreenProps) => {
 
     return (
         <View style={style.container}>
-            <PhotoView photo={place.photos[0]} maxWidth={screenWidth} style={style.photo} />
+            <PhotoView photo={place.photos?.length > 0 ? place.photos[0] : null} maxWidth={screenWidth} style={style.photo} />
             <View style={style.details}>
                 <Text style={style.heading}>{place.displayName.text}</Text>
                 <Rating style={style.rating} rating={place.rating} showNumber={true} />

@@ -6,14 +6,14 @@ import placeholderImage from '../../assets/placeholder.jpg';
 import { ActivityIndicator } from "react-native-paper";
 
 type PhotoProps = {
-    photo : Photo;
+    photo? : Photo;
     maxWidth?: number;
     style?: StyleProp<ImageStyle>; 
 }
 
 export const PhotoView = ({photo, maxWidth = 100, style} : PhotoProps) => {
     const [source, setSource] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(photo !== null);
 
     useEffect(() => {
         async function fetchPhoto(name: string) {
@@ -21,8 +21,9 @@ export const PhotoView = ({photo, maxWidth = 100, style} : PhotoProps) => {
             setSource(url);
             setIsLoading(false);
         }
-
-        fetchPhoto(photo.name);
+        if (photo) {
+            fetchPhoto(photo.name);
+        }
     }, []);
 
     const imageSource = source === "" ? placeholderImage : {uri: source};

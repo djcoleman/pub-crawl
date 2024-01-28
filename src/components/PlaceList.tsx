@@ -24,7 +24,7 @@ const PlaceListItem = ({ place, selected, onPress, onDoublePress }: PlaceListIte
             <Card style={selected ? styles.placeSelected : {}} >
                 <Card.Content>
                     <View style={{ flexDirection: 'row', gap: 8 }}>
-                        <PhotoView photo={place.photos[0]} maxWidth={100} style={styles.thumbnail} />
+                        <PhotoView photo={place.photos?.length > 0 ? place.photos[0] : null} maxWidth={100} style={styles.thumbnail} />
                         <View style={{ flex: 1 }}>
                             <Text numberOfLines={1} style={styles.placeTitle}>{place.displayName.text}</Text>
                             <Rating rating={place.rating} />

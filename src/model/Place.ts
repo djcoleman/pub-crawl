@@ -46,5 +46,5 @@ export type Place = {
     currentOpeningHours: OpeningHours;
     displayName: LocalizedText;
     editorialSummary?: LocalizedText;
-    photos: Photo[];
+    photos?: Photo[];
 }
